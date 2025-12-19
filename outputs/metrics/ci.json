@@ -1,0 +1,12 @@
+{
+  "auc_calibrated_CI95": {
+    "lo": 1.0,
+    "hi": 1.0,
+    "mean": 1.0
+  },
+  "recall_high@0.5_CI95": {
+    "lo": 0.0,
+    "hi": 1.0,
+    "mean": 0.913
+  }
+}

@@ -1,0 +1,239 @@
+import os, json, platform
+from pathlib import Path
+import streamlit as st
+import pandas as pd
+import numpy as np
+
+# --------- Paths ---------
+LOG_PATH = Path("outputs/diagnosis_log_pro.csv")
+METRICS_DIR = Path("outputs/metrics")
+CALIB_PNG = METRICS_DIR / "calibration_curve.png"
+DCA_PNG = METRICS_DIR / "dca_curve.png"
+METRICS_JSON = METRICS_DIR / "metrics.json"
+CI_JSON = METRICS_DIR / "ci.json"
+THRESH_PICK_JSON = METRICS_DIR / "threshold_pick.json"
+VAL_PREDS = METRICS_DIR / "val_preds.csv"
+
+# Fallback default if threshold_pick.json is missing (triage favors recall)
+DEFAULT_RECOMMENDED_THRESHOLD = 0.15  # conservative, see DCA section
+
+# --------- Streamlit page ---------
+def header():
+    st.set_page_config(page_title="Amoebanator Pro", layout="centered")
+    st.title("Amoebanator Pro — Phase 1")
+    st.caption("Trustworthy baseline: calibrated probabilities + DCA, with clear charts and metrics.")
+
+# --------- Data loaders (cached) ---------
+@st.cache_data
+def load_log(csv_path: Path) -> pd.DataFrame:
+    if not csv_path.exists():
+        return pd.DataFrame()
+    df = pd.read_csv(csv_path)
+    # normalize types
+    for col in ["age","csf_glucose","csf_protein","csf_wbc","pcr","microscopy","exposure","risk_score"]:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+    if "risk_label" in df.columns:
+        df["risk_label"] = df["risk_label"].astype(str)
+    if "symptoms" in df.columns:
+        df["symptoms"] = df["symptoms"].fillna("").astype(str)
+    return df
+
+@st.cache_data
+def load_json(path: Path):
+    try:
+        if path.exists():
+            with open(path, "r") as f:
+                return json.load(f)
+    except Exception:
+        pass
+    return {}
+
+@st.cache_data
+def load_val_preds(path: Path):
+    if path.exists():
+        try:
+            df = pd.read_csv(path)
+            y = df["y_true"].astype(int).to_numpy()
+            p = df["p_high_cal"].astype(float).to_numpy()  # use calibrated probs
+            return y, p
+        except Exception:
+            return None, None
+    return None, None
+
+# --------- Small helpers ---------
+def symptom_counts(df: pd.DataFrame) -> pd.Series:
+    if "symptoms" not in df.columns:
+        return pd.Series(dtype=int)
+    counts = {}
+    for s in df["symptoms"].astype(str):
+        for tok in [t for t in s.split(";") if t]:
+            counts[tok] = counts.get(tok, 0) + 1
+    return pd.Series(counts).sort_values(ascending=False)
+
+def net_benefit(y_true: np.ndarray, prob: np.ndarray, t: float):
+    """Standard DCA net benefit for a single threshold t."""
+    if y_true is None or prob is None or len(y_true) == 0:
+        return None, None, None, None, None
+    y = (y_true.astype(int)).copy()
+    p = (prob.astype(float)).copy()
+    N = len(y)
+    prev = y.mean()
+    pred = (p >= t).astype(int)
+    tp = ((pred == 1) & (y == 1)).sum()
+    fp = ((pred == 1) & (y == 0)).sum()
+    fn = ((pred == 0) & (y == 1)).sum()
+    tn = ((pred == 0) & (y == 0)).sum()
+    nb_model = (tp / N) - (fp / N) * (t / (1 - t))
+    nb_all = prev - (1 - prev) * (t / (1 - t))
+    return float(nb_model), float(nb_all), int(tp), int(fp), int(fn)
+
+def sweep_best_threshold(y_true: np.ndarray, prob: np.ndarray, lo=0.05, hi=0.30, step=0.01):
+    """Pick t with maximum model net benefit in [lo, hi]."""
+    if y_true is None or prob is None:
+        return None
+    best = None
+    t = lo
+    while t <= hi + 1e-9:
+        nb_model, nb_all, tp, fp, fn = net_benefit(y_true, prob, t)
+        if nb_model is None:
+            t += step
+            continue
+        if (best is None) or (nb_model > best["net_benefit"]):
+            best = {"threshold": round(float(t), 2),
+                    "net_benefit": nb_model,
+                    "tp": tp, "fp": fp, "fn": fn}
+        t += step
+    return best
+
+# --------- UI blocks ---------
+def charts_block(df: pd.DataFrame):
+    with st.expander("Charts & Global Stats", expanded=True):
+        if df.empty:
+            st.warning("No data yet. Make sure outputs/diagnosis_log_pro.csv exists and has rows.")
+            return
+        c1, c2, c3 = st.columns(3)
+
+        # Risk distribution
+        with c1:
+            if "risk_label" in df.columns:
+                order = ["High","Moderate","Low"]
+                st.bar_chart(df["risk_label"].value_counts().reindex(order).fillna(0))
+                st.caption("Risk label distribution")
+
+        # Symptom frequency
+        with c2:
+            sc = symptom_counts(df)
+            if not sc.empty:
+                st.bar_chart(sc)
+                st.caption("Symptom frequency")
+
+        # Score distribution
+        with c3:
+            if "risk_score" in df.columns:
+                st.bar_chart(df["risk_score"].astype(int).value_counts().sort_index())
+                st.caption("Score distribution")
+
+def figures_block():
+    with st.expander("Metrics & Figures (Phase 1)", expanded=True):
+        # Base metrics
+        m = load_json(METRICS_JSON)
+        c = load_json(CI_JSON)
+        y, p = load_val_preds(VAL_PREDS)
+
+        # Threshold pick (prefer precomputed json; else compute from val_preds; else default)
+        thresh_pick = load_json(THRESH_PICK_JSON)
+        if not thresh_pick:
+            best = sweep_best_threshold(y, p, lo=0.05, hi=0.30, step=0.01)
+            if best:
+                thresh_pick = {"threshold": best["threshold"], "net_benefit": best["net_benefit"],
+                               "tp": best["tp"], "fp": best["fp"], "fn": best["fn"]}
+            else:
+                thresh_pick = {"threshold": DEFAULT_RECOMMENDED_THRESHOLD, "net_benefit": None}
+
+        st.subheader("Validation metrics (calibrated)")
+        cols = st.columns(3)
+        auc_val = m.get("auc_calibrated", float("nan"))
+        rec_val = m.get("recall_high@0.5", float("nan"))
+        temp_val = m.get("T", float("nan"))
+        cols[0].metric("AUC", f"{auc_val:.3f}")
+        cols[1].metric("Recall (High) @0.5", f"{rec_val:.3f}")
+        cols[2].metric("Temperature (T)", f"{temp_val:.3f}")
+
+        # Confidence intervals if available
+        with st.container():
+            if c:
+                c1, c2 = st.columns(2)
+                a = c.get("auc_calibrated_CI95", {})
+                r = c.get("recall_high@0.5_CI95", {})
+                c1.write(f"**AUC 95% CI:** {a.get('lo', float('nan')):.3f} – {a.get('hi', float('nan')):.3f}  (mean {a.get('mean', float('nan')):.3f})")
+                c2.write(f"**Recall(High)@0.5 95% CI:** {r.get('lo', float('nan')):.3f} – {r.get('hi', float('nan')):.3f}  (mean {r.get('mean', float('nan')):.3f})")
+            else:
+                st.info("Run `python scripts/bootstrap_metrics.py` to produce 95% CIs (outputs/metrics/ci.json).")
+
+        st.divider()
+
+        # Recommended threshold (from DCA)
+        st.subheader("Recommended threshold (from Decision Curve Analysis)")
+        t_pick = float(thresh_pick.get("threshold", DEFAULT_RECOMMENDED_THRESHOLD))
+        nb = thresh_pick.get("net_benefit", None)
+        cl1, cl2 = st.columns(2)
+        cl1.metric("Recommended threshold", f"{t_pick:.2f}")
+        if nb is not None:
+            cl2.metric("Net benefit @ threshold", f"{nb:.4f}")
+        else:
+            cl2.info("Net benefit will appear once val_preds.csv is available.")
+
+        # Preview: compute current net benefit vs treat-all at a slider threshold
+        st.caption("Preview net benefit on validation (calibrated probabilities)")
+        if (y is not None) and (p is not None):
+            t_user = st.slider("Threshold for preview", 0.01, 0.50, value=t_pick, step=0.01)
+            nb_model, nb_all, tp, fp, fn = net_benefit(y, p, float(t_user))
+            if nb_model is not None:
+                s1, s2, s3 = st.columns(3)
+                s1.metric("Net benefit (model)", f"{nb_model:.4f}")
+                s2.metric("Net benefit (treat all)", f"{nb_all:.4f}")
+                s3.write(f"TP={tp}  FP={fp}  FN={fn}")
+            else:
+                st.info("Need outputs/metrics/val_preds.csv to preview net benefit.")
+        else:
+            st.info("Need outputs/metrics/val_preds.csv to preview net benefit.")
+
+        st.divider()
+
+        # Show the figures
+        st.subheader("Figures")
+        c1, c2 = st.columns(2)
+        with c1:
+            if CALIB_PNG.exists():
+                st.image(str(CALIB_PNG), caption="Calibration (Reliability) — uncalibrated vs temp-scaled")
+            else:
+                st.info("Missing calibration_curve.png → run `python scripts/plot_calibration_and_dca.py`")
+        with c2:
+            if DCA_PNG.exists():
+                st.image(str(DCA_PNG), caption="Decision Curve Analysis — net benefit vs threshold")
+            else:
+                st.info("Missing dca_curve.png → run `python scripts/plot_calibration_and_dca.py`")
+
+        # Cache tools
+        st.divider()
+        if st.button("Clear cached data (reload CSV/metrics)"):
+            st.cache_data.clear()
+            st.success("Cache cleared. Use 'Rerun' in the app menu.")
+
+def about_env_block():
+    with st.expander("About & Environment", expanded=False):
+        st.write("This build completes Phase 1: calibrated probabilities, DCA, figures, and summary metrics.")
+        st.write(f"Streamlit: {st.__version__}")
+        st.write(f"Python: {platform.python_version()}")
+        st.write(f"Platform: {platform.platform()}")
+
+def main():
+    header()
+    df = load_log(LOG_PATH)
+    charts_block(df)
+    figures_block()
+    about_env_block()
+
+if __name__ == "__main__":
+    main()

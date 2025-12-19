@@ -1,0 +1,31 @@
+timestamp_tz,case_id,source,physician,age,sex,csf_glucose,csf_protein,csf_wbc,symptoms,pcr,microscopy,exposure,risk_score,risk_label,comments
+2025-11-01 15:43:59 -0600,e5aaa07e-bc44-44a9-bb29-81bac028de23,simulated,demo,12,M,18.0,420.0,2100.0,fever;headache;nuchal_rigidity,1,1,1,16,High,"Summer lake swim 3 days ago; severe headache, fever, neck stiffness; PCR+; trophozoites seen."
+2025-11-02 15:18:59 -0600,a7f5f041-604c-4a63-8fe4-1130069b3e4e,simulated,demo,17,F,24.0,680.0,3200.0,fever;headache;nuchal_rigidity,1,0,1,13,High,Waterskiing 5 days ago; rapid decline; PCR+; microscopy negative.
+2025-10-30 19:01:59 -0600,71b0b26b-1863-4b9f-b2b4-f20296548fa4,simulated,demo,9,M,15.0,510.0,1800.0,fever;headache;nuchal_rigidity,0,1,1,12,High,Splash pad poorly chlorinated; wet mount with motile trophozoites; PCR pending.
+2025-10-31 03:15:59 -0600,89ff97c6-47dd-465a-b782-63b43ac46f6a,simulated,demo,35,F,28.0,110.0,1200.0,fever;headache,1,0,1,12,High,Hot spring exposure; fever/headache; PCR+; no nuchal rigidity yet.
+2025-10-31 09:10:59 -0600,b0c3bd66-d3a4-48a3-a3f4-e46c56300273,simulated,demo,22,M,10.0,340.0,2600.0,fever;headache;nuchal_rigidity,1,1,1,16,High,River cliff-jump; fulminant course; PCR+ and microscopy+; markedly abnormal CSF.
+2025-11-01 08:01:59 -0600,60a50b62-a8f9-4891-b325-7c45c5b17f66,simulated,demo,6,M,20.0,220.0,1500.0,fever;nuchal_rigidity,1,0,1,12,High,Lake play; fever and neck stiffness; PCR+; microscopy not seen.
+2025-11-01 18:08:59 -0600,31f9ddc1-4827-437b-9d35-4bbfd6ea0d77,simulated,demo,44,F,12.0,190.0,900.0,fever;headache;nuchal_rigidity,0,1,1,12,High,Home nasal rinse with unboiled tap water; microscopy positive; PCR pending.
+2025-10-27 17:12:59 -0600,e56a4321-01c2-4d8b-8c9a-26f863de9262,simulated,demo,28,M,26.0,410.0,1400.0,fever;headache,1,1,1,15,High,Wakeboarding; PCR+; microscopy+; early LP.
+2025-11-01 22:23:59 -0600,2be9d996-d3d7-462e-a90d-07f3f908f7e6,simulated,demo,15,F,35.0,130.0,800.0,fever;headache;nuchal_rigidity,0,0,1,7,High,Freshwater cave swim; strong CSF signals; tests pending.
+2025-10-27 04:53:59 -0600,9868439e-7383-490b-aa95-81e967b37d57,simulated,demo,31,M,8.0,160.0,700.0,fever;headache;nuchal_rigidity,1,0,1,13,High,Irrigation ditch exposure; PCR+ early; microscopy negative.
+2025-10-29 02:55:59 -0600,e7aa3b52-9148-45d2-9b4b-82332a6ee6f4,simulated,demo,14,M,32.0,130.0,650.0,fever;headache,0,0,1,6,Moderate,Lake swim 8 days ago; fever/headache; protein/WBC elevated; glucose borderline.
+2025-11-02 13:27:59 -0600,853a8365-04c9-4c9c-8e23-28e6cb399c26,simulated,demo,19,F,50.0,180.0,900.0,fever;headache;nuchal_rigidity,0,0,1,7,High,Reservoir exposure; neck stiffness; labs suggestive though glucose not very low.
+2025-11-02 13:59:59 -0600,946d0846-02f8-4f5d-a9fb-0c0b86bceecd,simulated,demo,37,M,38.0,95.0,520.0,fever;nuchal_rigidity,0,0,1,4,Low,"Hot springs; no fever, neck stiffness and abnormal CSF persist."
+2025-11-01 20:32:59 -0600,f9bbc359-9da0-4918-be8c-b82297ea8418,simulated,demo,24,F,42.0,140.0,400.0,fever;headache,0,0,1,4,Low,River swim; WBC modest; watchful follow-up; no PCR yet.
+2025-10-31 10:25:59 -0600,285dcfec-6bdd-4954-a60b-d241351a4b7d,simulated,demo,11,M,29.0,85.0,420.0,fever;headache,0,0,1,4,Low,Pond exposure; low-normal glucose; elevated protein; symptoms consistent.
+2025-10-31 06:36:59 -0600,fca95277-0d3a-43ce-b04f-6cdedcd07b6a,simulated,demo,62,F,60.0,105.0,650.0,fever;headache,0,0,0,6,Moderate,No clear exposure; older adult with fever/headache and elevated protein/WBC.
+2025-10-28 04:08:59 -0600,d213f7da-4f83-412b-871b-5ff8ef63308d,simulated,demo,8,M,28.0,75.0,480.0,fever;headache,0,0,1,4,Low,Camping near warm river; symptoms plus moderate CSF changes; exposure likely.
+2025-10-27 01:44:59 -0600,115078c3-5357-489e-b7cf-c7e4c8bfd3f4,simulated,demo,33,F,46.0,115.0,550.0,fever;headache,0,0,0,6,Moderate,No freshwater exposure; CSF mildly abnormal; consider bacterial/viral DDx.
+2025-11-02 14:53:59 -0600,675699f0-e7aa-4a95-877e-565294048201,simulated,demo,52,M,40.0,90.0,510.0,fever,0,0,1,3,Low,Lake fishing from shore; fever only; moderate protein/WBC elevation.
+2025-10-27 12:52:59 -0600,d931066d-028e-4d42-ace5-5b151f2484f3,simulated,demo,27,F,36.0,120.0,480.0,fever;headache,0,0,1,4,Low,Kayaking; mild CSF abnormalities; symptoms present; monitor closely.
+2025-10-31 15:50:59 -0600,6519a526-dcae-4a91-820a-dfd32c1e97bb,simulated,demo,20,M,62.0,45.0,220.0,fever;headache,0,0,0,2,Low,Headache/fever after mild URI; no exposure; CSF mostly reassuring.
+2025-10-27 17:19:59 -0600,532a1004-2bd4-4ff7-8a76-2ef0540d5f6d,simulated,demo,41,F,70.0,35.0,200.0,fever,0,0,0,1,Low,Migraine hx; no freshwater exposure; CSF not suggestive of PAM.
+2025-10-29 03:34:59 -0600,87989c77-eb6d-4466-a7ce-110511514d2e,simulated,demo,29,M,68.0,55.0,180.0,headache,0,0,0,1,Low,Isolated headache; no fever; normal-ish CSF; likely non-infectious.
+2025-10-31 09:56:59 -0600,b8fcb5d1-b57b-47cd-bf23-6780990ccf33,simulated,demo,7,F,72.0,60.0,150.0,fever;headache,0,0,0,2,Low,Daycare viral illness; CSF near normal; no freshwater exposure.
+2025-10-28 19:28:59 -0600,1e9b3084-33e7-46c6-86ae-e8cecebf67f6,simulated,demo,48,M,220.0,90.0,100.0,fever;headache,0,0,0,2,Low,CSF glucose high; protein low; unlikely meningitis; no exposure.
+2025-10-27 05:13:59 -0600,6e9b67f2-5d67-448f-a699-6fa792b272c7,simulated,demo,13,F,65.0,120.0,200.0,headache,0,0,0,3,Low,Headache only; CSF benign; no exposure; outpatient follow-up.
+2025-10-30 18:10:59 -0600,333bcc98-7446-4aa3-b8cb-34d0cf74d959,simulated,demo,34,M,60.0,300.0,450.0,fever,0,0,0,3,Low,Fever without neck stiffness; CSF near normal; viral syndrome likely.
+2025-11-02 20:21:59 -0600,98ab4aa2-7f5f-4bdf-8df1-1069fb86b22c,simulated,demo,18,F,85.0,280.0,450.0,fever;headache,0,0,0,4,Low,Protein mildly high but WBC <500; no exposure; monitor.
+2025-11-01 02:32:59 -0600,97712399-99b7-4524-a581-f1162f9590d4,simulated,demo,55,M,95.0,260.0,350.0,headache,0,0,0,3,Low,Chronic headaches; normal glucose; no exposure; low suspicion.
+2025-10-29 02:43:59 -0600,136f37ff-dd87-42db-bfa9-71dd0779c77e,simulated,demo,23,F,70.0,240.0,480.0,fever,0,0,0,3,Low,Fever; CSF not meeting strong thresholds; no exposure; low risk.

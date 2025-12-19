@@ -1,0 +1,12 @@
+[
+  "age",
+  "csf_glucose",
+  "csf_protein",
+  "csf_wbc",
+  "pcr",
+  "microscopy",
+  "exposure",
+  "sym_fever",
+  "sym_headache",
+  "sym_nuchal_rigidity"
+]

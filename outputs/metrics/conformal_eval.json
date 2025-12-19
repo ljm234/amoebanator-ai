@@ -1,0 +1,9 @@
+{
+  "alpha": 0.1,
+  "target_coverage": 0.9,
+  "empirical_coverage": 1.0,
+  "abstain_rate": 0.0,
+  "singleton_rate": 1.0,
+  "empty_rate": 0.0,
+  "n": 6
+}

@@ -1,0 +1,9 @@
+{
+  "threshold": 0.05,
+  "net_benefit": 0.2982456140350877,
+  "net_benefit_all": 0.2982456140350877,
+  "sensitivity": 1.0,
+  "specificity": 0.0,
+  "PPV": 0.3333333333333333,
+  "F1": 0.5
+}
