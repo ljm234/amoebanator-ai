@@ -5,7 +5,7 @@ import pandas as pd
 from pathlib import Path
 import streamlit as st
 from ml.infer import infer_one
-from ml.robust.ood import STATS_JSON, ENERGY_JSON, fit_tabular_stats
+from ml.robust import STATS_JSON, ENERGY_JSON, fit_tabular_stats
 
 LOG = Path("outputs/diagnosis_log_pro.csv")
 
@@ -24,10 +24,12 @@ def _write_json(p: Path, d: dict):
 def render_phase3_panel():
     with st.expander("Robustness (Phase 3)", expanded=True):
         if not LOG.exists():
-            st.warning("No diagnosis_log_pro.csv"); return
+            st.warning("No diagnosis_log_pro.csv")
+            return
         df = pd.read_csv(LOG)
         if df.empty:
-            st.warning("Log is empty"); return
+            st.warning("Log is empty")
+            return
         row = df.iloc[-1]
         out = infer_one(row)
         stats = _read_json(STATS_JSON)

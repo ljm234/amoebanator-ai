@@ -210,3 +210,8 @@ __marimo__/
 .DS_Store
 .vscode/
 .idea/
+
+# Private / personal — do not publish
+docs/AI/
+docs/PHD_APPLICATION_PLAN_2026.md
+apex/

@@ -1,6 +1,6 @@
 import json
 from argparse import ArgumentParser
-from ml.robust.ood import fit_tabular_stats, STATS_JSON
+from ml.robust import fit_tabular_stats, STATS_JSON
 
 def main():
     p = ArgumentParser()

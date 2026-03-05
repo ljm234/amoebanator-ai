@@ -1,8 +1,7 @@
 from __future__ import annotations
-import numpy as np
 import pandas as pd
 from pathlib import Path
-from ml.robust.ood import fit_energy_threshold
+from ml.robust import fit_energy_threshold
 
 VAL = Path("outputs/metrics/val_preds.csv")
 

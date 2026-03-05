@@ -1,6 +1,5 @@
-# ml/robust/ood.py
+# ml/robust.py  — Tabular out-of-distribution detection utilities
 from __future__ import annotations
-from ml.robust.ood import score_tabular, STATS_JSON, ENERGY_JSON
 import json
 from pathlib import Path
 import numpy as np
@@ -69,7 +68,7 @@ def fit_tabular_stats(
         return out
 
     cols = _pick_cols(df, drop_cols)
-    X = df[cols].to_numpy(dtype=float)
+    X: np.ndarray = df[cols].to_numpy(dtype=float)
     X = np.where(np.isfinite(X), X, np.nan)
 
     col_median = np.nanmedian(X, axis=0)
@@ -80,7 +79,7 @@ def fit_tabular_stats(
     Z = _robust_z(X_filled, col_median, col_mad)
 
     mu = Z.mean(axis=0)
-    S = np.cov(Z, rowvar=False)
+    S: np.ndarray = np.cov(Z, rowvar=False)
     if use_diagonal:
         S = np.diag(np.clip(np.diag(S), 1e-6, None))
 
@@ -155,7 +154,7 @@ def score_tabular(row: pd.Series, stats: dict) -> dict:
     S   = np.array(stats["S"], dtype=float)
     S   = S[np.ix_(idx, idx)]
 
-    x = row[present].to_numpy(dtype=float)
+    x: np.ndarray = row[present].to_numpy(dtype=float)
     x = np.where(np.isfinite(x), x, np.nan)
     z = _robust_z(np.where(np.isnan(x), med, x), med, mad)
 

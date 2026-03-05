@@ -1,10 +1,11 @@
 from __future__ import annotations
-import sys, json
+import sys
+import json
 from pathlib import Path
 import pandas as pd
 
 from ml.infer import infer_one
-from ml.robust.ood import STATS_JSON
+from ml.robust import STATS_JSON
 
 LOG_CSV = Path("outputs/diagnosis_log_pro.csv")
 

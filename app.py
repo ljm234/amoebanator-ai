@@ -1,4 +1,5 @@
-import os, json, platform
+import json
+import platform
 from pathlib import Path
 import streamlit as st
 import pandas as pd
@@ -63,7 +64,7 @@ def load_val_preds(path: Path):
 def symptom_counts(df: pd.DataFrame) -> pd.Series:
     if "symptoms" not in df.columns:
         return pd.Series(dtype=int)
-    counts = {}
+    counts: dict[str, int] = {}
     for s in df["symptoms"].astype(str):
         for tok in [t for t in s.split(";") if t]:
             counts[tok] = counts.get(tok, 0) + 1

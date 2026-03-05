@@ -3,13 +3,15 @@ import json
 import numpy as np
 import pandas as pd
 from pathlib import Path
-from ml.robust.ood import STATS_JSON, LOG_CSV, check_ood_row
+from ml.robust import STATS_JSON, LOG_CSV, check_ood_row
 
 def main():
     if not Path(LOG_CSV).exists():
-        print("Missing diagnosis_log_pro.csv"); return
+        print("Missing diagnosis_log_pro.csv")
+        return
     if not Path(STATS_JSON).exists():
-        print("Missing feature_stats.json"); return
+        print("Missing feature_stats.json")
+        return
     df = pd.read_csv(LOG_CSV)
     row = df.iloc[-1]
     stats = json.loads(Path(STATS_JSON).read_text())
